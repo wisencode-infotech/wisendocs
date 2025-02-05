@@ -36,5 +36,11 @@ class FakeAppSeeder extends Seeder
             'password' => Hash::make('wisendoc_test'),
         ]);
 
+        $this->call([
+            FakeVersionSeeder::class,
+            FakeTopicSeeder::class,
+            FakeTopicBlockSeeder::class,
+        ]);
+
     } 
 }

@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\TopicBlock;
 
-class FaqTopicBlockSeeder extends Seeder
+class FakeTopicBlockSeeder extends Seeder
 {
     public function run()
     {

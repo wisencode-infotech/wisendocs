@@ -6,7 +6,7 @@ use App\Models\Version;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class VersionSeeder extends Seeder
+class FakeVersionSeeder extends Seeder
 {
     /**
      * Run the database seeds.

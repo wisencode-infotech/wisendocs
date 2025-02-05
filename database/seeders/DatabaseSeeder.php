@@ -12,10 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            VersionSeeder::class,
-            FaqTopicSeeder::class,
-            BlockTypeSeeder::class,
-            FaqTopicBlockSeeder::class,
+            BlockTypeSeeder::class
         ]);
     }
 }
