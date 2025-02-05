@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-xl-12">
         <div class="row">
-            <p class="fw-medium">Welcome to Wisenshop Docs!</p>
+            <p class="fw-medium">Welcome to Wisendocs!</p>
         </div>
     </div>
 </div>

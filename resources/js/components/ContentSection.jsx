@@ -24,7 +24,7 @@ const ContentSection = ({ topicSlug, currentVersion }) => {
   const location = useLocation();
 
   const homePage = {
-    title: "Welcome to the official documentation for WisenShop",
+    title: "Welcome to the official documentation for Wisendocs",
     description: "This documentation is designed to provide a comprehensive and professional resource for understanding and utilizing our software to its fullest potential. Please use the navigation menu to explore topics or leverage the search functionality to find specific information.",
     button: {
       text: 'Start Exploring',

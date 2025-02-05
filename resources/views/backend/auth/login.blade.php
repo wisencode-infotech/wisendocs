@@ -61,7 +61,7 @@
 
                                         <div>
                                             <h5 class="text-primary">Welcome Back !</h5>
-                                            <p class="text-muted">Sign in to continue to Wisenshop Docs.</p>
+                                            <p class="text-muted">Sign in to continue to Wisendocs.</p>
                                         </div>
 
                                         <div class="mt-4">
@@ -127,7 +127,7 @@
                                         <p class="mb-0">© <script>
                                                 document.write(new Date().getFullYear())
 
-                                            </script> Wisenshop Docs. Built <i class="mdi mdi-code text-danger"></i> by
+                                            </script> Wisendocs. Built <i class="mdi mdi-code text-danger"></i> by
                                             <a href="{{ env('APP_AUTHOR_SITE', 'https://wisencode.com') }}">Wisencode Infotech</a></p>
                                     </div>
                                 </div>
