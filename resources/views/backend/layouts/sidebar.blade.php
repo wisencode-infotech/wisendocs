@@ -15,6 +15,20 @@
                         <span key="t-calendar">Dashboard</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="{{ route('backend.version.index') }}" class="waves-effect">
+                        <i class="bx bx-revision"></i>
+                        <span key="t-calendar">Versions</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('backend.topic.index') }}" class="waves-effect">
+                        <i class="bx bx-book"></i>
+                        <span key="t-calendar">Topic</span>
+                    </a>
+                </li>
                 
             </ul>
         </div>
