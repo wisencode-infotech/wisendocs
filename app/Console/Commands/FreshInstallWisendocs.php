@@ -7,21 +7,21 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class FreshInstallWisendoc extends Command
+class FreshInstallWisendocs extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'wisendoc:fresh-install {--force}';
+    protected $signature = 'wisendocs:fresh-install {--force}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Perform a fresh install of Wisendoc by migrating and seeding the database.';
+    protected $description = 'Perform a fresh install of Wisendocs by migrating and seeding the database.';
 
     /**
      * Execute the console command.
@@ -39,7 +39,7 @@ class FreshInstallWisendoc extends Command
         }
 
         // Run the 'migrate:fresh --seed' command
-        $this->showConsoleHeadingMessageCompact('Installation started. Please wait...', 'Wisendoc', 'red');
+        $this->showConsoleHeadingMessageCompact('Installation started. Please wait...', 'Wisendocs', 'red');
         $this->call('migrate:fresh', ['--seed' => true]);
 
         // Log information after completing the first command
