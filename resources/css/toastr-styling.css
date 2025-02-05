@@ -1,0 +1,17 @@
+.toastr {
+    padding: 16px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    margin: 10px;
+}
+
+.toastr.dark {
+    border: 1px solid #ffffffab;
+    background: #f2f2f2ab;
+    color: #000000;
+}
+
+.toastr.light {
+    border: 1px solid #858585a8;
+    background: #000000a8;
+    color: #f2f2f280;
+}

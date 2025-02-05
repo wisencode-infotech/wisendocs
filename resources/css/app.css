@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-content{
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.left-sidebar{
+    overflow-y: auto;
+}
+
+code {
+    background-color: #f4f4f4;
+    color: #c7254e;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95em;
+}
+
+.popup-effect {
+    animation: popup-animation 0.8s ease-out forwards;
+}
+
+@keyframes popup-animation {
+    0% {
+        transform: scale(0) translateY(50%); /* Start small and below */
+        opacity: 0; /* Fully invisible */
+    }
+    50% {
+        transform: scale(1.2) translateY(0); /* Overshoot for emphasis */
+        opacity: 1; /* Fully visible */
+    }
+    100% {
+        transform: scale(1) translateY(0); /* Settle to original size */
+    }
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
