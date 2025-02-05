@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
             FaqTopicSeeder::class,
             BlockTypeSeeder::class,
             FaqTopicBlockSeeder::class,
-            UserRolesSeeder::class,
         ]);
     }
 }
