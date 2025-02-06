@@ -6,6 +6,7 @@ import ThemeModeSwitcher from "./ThemeMode/Switcher";
 
 const Header = ({ availableVersions, currentVersion, setCurrentVersion, toggleSidebar }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  console.log(availableVersions);
 
   return (
     <header className="bg-theme-light dark:bg-theme-dark dark:text-theme-darkText text-theme-lightText shadow-lg sticky top-0 z-10">

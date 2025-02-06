@@ -13,8 +13,15 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-            <div class="row mb-2">
-                    <div class="col-sm"></div>
+                <div class="row mb-2">
+                    <div class="col-sm">
+                        <div class="search-box me-2 d-inline-block">
+                            <div class="position-relative">
+                                <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Search...">
+                                <i class="bx bx-search-alt search-icon"></i>
+                            </div>
+                        </div>
+                    </div>
                     <!-- end col -->
                     <div class="col-sm-auto">
                         <div class="text-sm-end">
@@ -23,18 +30,22 @@
                     </div>
                     <!-- end col -->
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="versions-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Identifier</th>
-                                <th>Description</th>
-                                <th>Notes</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+                <!-- end row -->
+                <div class="">
+                    <div class="table-responsive">
+                        <table id="versions-table" class="table project-list-table align-middle table-nowrap dt-responsive nowrap w-100 table-borderless">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" style="width: 60px">#</th>
+                                    <th scope="col">Identifier</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Notes</th>
+                                    <th scope="col">Action</th>
+
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

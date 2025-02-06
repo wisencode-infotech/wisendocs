@@ -24,11 +24,36 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('backend.topic.index') }}" class="waves-effect">
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="bx bx-book"></i>
-                        <span key="t-calendar">Topic</span>
+                        <span key="t-ecommerce">Topics</span>
                     </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        @foreach (getVersions() as $version)
+                            <li>
+                                <a href="{{ route('backend.topic.index', ['version' => $version->id]) }}" key="t-products">
+                                    {{ $version->identifier }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </li>
+
+                <!-- <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx bx-layer"></i>
+                        <span key="t-ecommerce">Topic Blocks</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        @foreach (getVersions() as $version)
+                            <li>
+                                <a href="{{ route('backend.topic-block.index', ['version' => $version->id]) }}" key="t-products">
+                                    {{ $version->identifier }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li> -->
                 
             </ul>
         </div>

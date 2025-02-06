@@ -62,28 +62,31 @@ class VersionController extends Controller
         ]);
 
         try {
-            $newVersion = Version::create([
+            $new_version = Version::create([
                 'identifier' => $request->identifier,
                 'description' => $request->description,
                 'notes' => $request->notes,
             ]);
 
             if ($request->copy_content && $request->existing_version) {
-                $existingVersion = Version::find($request->existing_version);
+                $existing_version = Version::find($request->existing_version);
 
-                foreach ($existingVersion->topics as $topic) {
-                    $newTopic = $topic->replicate();
-                    $newTopic->version_id = $newVersion->id;
-                    $newTopic->slug = Str::slug($newTopic->name . '-' . $newVersion->id);
-                    $newTopic->save();
+                foreach ($existing_version->topics as $topic) {
+                    $new_topic = $topic->replicate();
+                    $new_topic->version_id = $new_version->id;
+                    $new_topic->slug = Str::slug($new_topic->name);
+                    $new_topic->save();
 
                     foreach ($topic->blocks as $block) {
-                        $newBlock = $block->replicate();
-                        $newBlock->topic_id = $newTopic->id;
-                        $newBlock->save();
+                        $new_block = $block->replicate();
+                        $new_block->topic_id = $new_topic->id;
+                        $new_block->save();
                     }
                 }
             }
+
+            // app('App\Helpers\SystemUtils')->clearCached('versions');
+            app('App\Helpers\SystemUtils')->clearAllCache();
 
             return redirect()->route('backend.version.index')->with('success', 'Version created successfully!');
         } catch (\Exception $e) {
@@ -113,6 +116,9 @@ class VersionController extends Controller
 
         $version->update($request->all());
 
+        // app('App\Helpers\SystemUtils')->clearCached('versions');
+        app('App\Helpers\SystemUtils')->clearAllCache();
+
         return redirect()->route('backend.version.index')
             ->with('success', 'Version updated successfully.');
     }
@@ -125,6 +131,9 @@ class VersionController extends Controller
         $version = Version::find($id);
         if ($version) {
             $version->delete();
+
+            app('App\Helpers\SystemUtils')->clearAllCache();
+
             return response()->json(['success' => 'Version deleted successfully.']);
         }
         return response()->json(['error' => 'Version not found.'], 404);

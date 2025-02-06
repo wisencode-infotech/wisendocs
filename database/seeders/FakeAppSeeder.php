@@ -23,11 +23,11 @@ class FakeAppSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s')
             ]
         ]);
-
+        
         User::create([
             'name' => 'Administrator',
-            'email' => 'admin@wisendoc.com',
-            'password' => Hash::make('wisendoc450#!'),
+            'email' => 'admin@wisendocs.com',
+            'password' => Hash::make('master@wisendocs121'),
             'user_role_id' => 1
         ]);
 

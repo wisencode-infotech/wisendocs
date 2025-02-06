@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Topic;
 use App\Models\Version;
+use App\Rules\UniqueSlugPerVersion;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -13,20 +14,24 @@ class TopicController extends Controller
     /**
      * Display a listing of the topics.
      */
-    public function index(Request $request)
+    public function index(Request $request, Version $version)
     {
         if ($request->ajax()) {
-            $data = Topic::latest()->get();
+            $data = Topic::where('version_id', $version->id)->latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
                     return $row->name;
+                })
+                ->addColumn('slug', function ($row) {
+                    return $row->slug;
                 })
                 ->addColumn('version', function ($row) {
                     return $row->versioning->identifier ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('backend.topic.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>';
+                    $btn .= ' <a href="' . route('backend.manage-topic-block.index', $row->id) . '" class="manage btn btn-info btn-sm">Manage Topic Content</a>';
                     $btn .= ' <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Delete</button>';
                     return $btn;
                 })
@@ -34,7 +39,7 @@ class TopicController extends Controller
                 ->make(true);
         }
 
-        return view('backend.topic.index');
+        return view('backend.topic.index', compact('version'));
     }
 
     /**
@@ -52,21 +57,40 @@ class TopicController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:topics,name',
+            'name' => 'required',
             'version_id' => 'required|exists:versions,id',
         ]);
 
         try {
+
+            $slug = \Str::slug($request->name); // Generate slug from name
+            $slug = $this->generateUniqueSlug($slug, $request->version_id); 
+
             Topic::create([
                 'name' => $request->name,
-                'slug' => \Str::slug($request->name),
+                'slug' => $slug,
                 'version_id' => $request->version_id,
             ]);
 
-            return redirect()->route('backend.topic.index')->with('success', 'Topic created successfully!');
+            $version = Version::find($request->version_id);
+
+            app('App\Helpers\SystemUtils')->setVersionIdentifier($version)->clearCached('topics');
+
+            return redirect()->back()->with('success', 'Topic created successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors(['error' => 'An error occurred: ' . $e->getMessage()]);
         }
+    }
+
+    private function generateUniqueSlug($slug, $versionId, $count = 0)
+    {
+        $newSlug = $count ? "{$slug}-{$count}" : $slug;
+
+        if (Topic::where('slug', $newSlug)->where('version_id', $versionId)->exists()) {
+            return $this->generateUniqueSlug($slug, $versionId, $count + 1);
+        }
+
+        return $newSlug;
     }
 
     /**
@@ -84,13 +108,18 @@ class TopicController extends Controller
     public function update(Request $request, Topic $topic)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:topics,name,' . $topic->id,
+            'slug' => 'required|string|max:255|unique:topics,slug,' . $topic->id,
             'version_id' => 'required|exists:versions,id',
+            'slug' => ['required', 'string', 'max:255', new UniqueSlugPerVersion($request->version_id, $topic->id)],
         ]);
 
         $topic->update($request->all());
 
-        return redirect()->route('backend.topic.index')->with('success', 'Topic updated successfully.');
+        $version = Version::find($request->version_id);
+
+        app('App\Helpers\SystemUtils')->setVersionIdentifier($version)->clearCached('topics');
+
+        return redirect()->back()->with('success', 'Topic updated successfully.');
     }
 
     /**

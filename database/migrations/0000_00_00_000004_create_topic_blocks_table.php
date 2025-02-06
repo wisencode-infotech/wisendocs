@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('order');
             $table->unsignedInteger('start_content_level')->nullable();
             $table->timestamps();
+            $table->softDeletes(); 
     
             $table->foreign('topic_id')->references('id')->on('topics')->onDelete('cascade');
             $table->foreign('block_type_id')->references('id')->on('block_types')->onDelete('cascade');
