@@ -16,35 +16,41 @@ class ManageTopicBlockController extends Controller
      */
     public function index(Request $request, Topic $topic)
     {
-        if ($request->ajax()) {
-
-            $data = TopicBlock::where('topic_id', $topic->id)->orderBy('order', 'asc')->get();
-            
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('block_type', function ($row) {
-                    return $row->blockType->type ?? 'N/A';
-                })
-                ->addColumn('attributes', function ($row) {
-                    return $row->attributes ?? 'N/A';
-                })
-                ->addColumn('order', function ($row) {
-                    return $row->order ?? 'N/A';
-                })
-                ->addColumn('start_content_level', function ($row) {
-                    return $row->start_content_level ?? 'N/A';
-                })
-                ->addColumn('action', function ($row) use ($topic) {
-                    $btn = '<a href="' . route('backend.manage-topic-block.edit', ['topic' => $topic->id, 'topic_block' => $row->id]) . '" class="edit btn btn-primary btn-sm">Edit</a>';
-                    $btn .= ' <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Delete</button>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-
-        return view('backend.manage-topic-block.index', compact('topic'));
+        $block_types = BlockType::all();
+        return view('backend.manage-topic-block.manage', compact('block_types'));
     }
+
+    // public function index(Request $request, Topic $topic)
+    // {
+    //     if ($request->ajax()) {
+
+    //         $data = TopicBlock::where('topic_id', $topic->id)->orderBy('order', 'asc')->get();
+            
+    //         return Datatables::of($data)
+    //             ->addIndexColumn()
+    //             ->addColumn('block_type', function ($row) {
+    //                 return $row->blockType->type ?? 'N/A';
+    //             })
+    //             ->addColumn('attributes', function ($row) {
+    //                 return $row->attributes ?? 'N/A';
+    //             })
+    //             ->addColumn('order', function ($row) {
+    //                 return $row->order ?? 'N/A';
+    //             })
+    //             ->addColumn('start_content_level', function ($row) {
+    //                 return $row->start_content_level ?? 'N/A';
+    //             })
+    //             ->addColumn('action', function ($row) use ($topic) {
+    //                 $btn = '<a href="' . route('backend.manage-topic-block.edit', ['topic' => $topic->id, 'topic_block' => $row->id]) . '" class="edit btn btn-primary btn-sm">Edit</a>';
+    //                 $btn .= ' <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Delete</button>';
+    //                 return $btn;
+    //             })
+    //             ->rawColumns(['action'])
+    //             ->make(true);
+    //     }
+
+    //     return view('backend.manage-topic-block.index', compact('topic'));
+    // }
 
     /**
      * Show the form for creating a new topic block.
