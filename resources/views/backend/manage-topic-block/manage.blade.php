@@ -13,7 +13,10 @@
     .nested-list {
         list-style: none;
         padding-left: 0;
-        padding: 10px;
+    }
+
+    .nested-list li:first-child {
+        margin-top: 10px;
     }
 
     .list-group{
@@ -31,23 +34,26 @@
 
     .list-group-item .item-content {
         flex-grow: 1;
+        font-weight: bolder;
+        margin-right: 10px;
     }
 
     .remove-block {
         cursor: pointer;
         color: red;
         font-weight: bold;
-        margin-left: 10px;
-        float: right;
-    }
-
-    .edit-block{
-        float: right;
-        margin-left: 5px;
     }
 
     .level-indent {
         padding-left: 20px;
+    }
+
+    .btn.rounded-circle {
+        width: 30px; /* Adjust as needed */
+        height: 30px; /* Adjust as needed */
+        align-items: center;
+        justify-content: center;
+        padding: 0;
     }
 </style>
 
@@ -126,8 +132,8 @@ $(document).ready(function() {
         let newBlock = $(`
             <li class="list-group-item selected-block level-${level}" data-type="${blockType}" data-level="${level}">
                 <span class="item-content">${blockType.replace("-", " ")}</span>
-                <button class="btn btn-sm btn-danger remove-block">X</button>
-                <button class="btn btn-sm btn-warning edit-block">Edit</button>
+                <button class="btn btn-sm btn-success edit-block rounded-circle"><i class="bx bx-pencil"></i></button>
+                <button class="btn btn-sm btn-danger rounded-circle remove-block"><i class="bx bx-x"></i></button>
                 <ul class="nested-list"></ul>
             </li>
         `);

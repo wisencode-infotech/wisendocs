@@ -46,8 +46,9 @@ class ManageTopicBlockController extends Controller
                          data-id=\"$block->id\">";
 
             $html .= "<span class=\"item-content\">$type</span>";
-            $html .= " <button class=\"btn btn-sm btn-danger remove-block\">X</button>";
-            $html .= " <button class=\"btn btn-sm btn-warning edit-block\">Edit</button>";
+
+            $html .= " <button class=\"btn btn-sm btn-success edit-block rounded-circle\"><i class=\"bx bx-pencil\"></i></button>";
+            $html .= " <button class=\"btn btn-sm btn-danger rounded-circle remove-block\"><i class=\"bx bx-x\"></i></button>";
             $html .= "<ul class=\"nested-list\"></ul>";
 
             if ($block->children->isNotEmpty()) {
