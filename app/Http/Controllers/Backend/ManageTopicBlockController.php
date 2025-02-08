@@ -11,15 +11,58 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ManageTopicBlockController extends Controller
 {
-    /**
-     * Display a listing of the topic blocks.
-     */
     public function index(Request $request, Topic $topic)
     {
         $block_types = BlockType::all();
-        return view('backend.manage-topic-block.manage', compact('block_types'));
+
+        $topic_blocks = TopicBlock::where('topic_id', $topic->id)
+            ->whereNull('parent_id')
+            ->with('children.blockType')
+            ->orderBy('order')
+            ->get();
+
+        $block_html = $this->generateNestedList($topic_blocks, true);
+
+        return view('backend.manage-topic-block.manage', compact('topic', 'block_types', 'block_html'));
     }
 
+    private function generateNestedList($blocks, $isMain = false)
+    {
+        if ($blocks->isEmpty()) return '';
+
+        $ulClass = $isMain ? 'list-group min-vh-50 border ui-sortable' : 'nested-list ui-sortable';
+        $ulId = $isMain ? 'id="middle-list"' : '';
+
+        $html = "<ul class=\"$ulClass\" $ulId>";
+
+        foreach ($blocks as $block) {
+            $level = $block->start_content_level;
+            $type = $block->blockType->type ?? 'Unknown';
+
+            $html .= "<li class=\"list-group-item selected-block level-$level\" 
+                         data-type=\"$type\" 
+                         data-attribute='" . htmlspecialchars($block->attributes, ENT_QUOTES, 'UTF-8') . "' 
+                         data-level=\"$level\" 
+                         data-id=\"$block->id\">";
+
+            $html .= "<span class=\"item-content\">$type</span>";
+            $html .= " <button class=\"btn btn-sm btn-danger remove-block\">X</button>";
+            $html .= " <button class=\"btn btn-sm btn-warning edit-block\">Edit</button>";
+            $html .= "<ul class=\"nested-list\"></ul>";
+
+            if ($block->children->isNotEmpty()) {
+                $html .= $this->generateNestedList($block->children);
+            }
+
+            $html .= "</li>";
+        
+        }
+
+        $html .= "</ul>";
+
+        return $html;
+    }
+    
     // public function index(Request $request, Topic $topic)
     // {
     //     if ($request->ajax()) {

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->json('attributes')->nullable();
             $table->unsignedBigInteger('order');
             $table->unsignedInteger('start_content_level')->nullable();
+            $table->foreignId('parent_id')->nullable()->constrained('topic_blocks')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes(); 
     
