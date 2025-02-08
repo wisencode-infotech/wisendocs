@@ -31,7 +31,7 @@ class TopicController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('backend.topic.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>';
-                    $btn .= ' <a href="' . route('backend.manage-topic-block.index', $row->id) . '" class="manage btn btn-info btn-sm">Manage Topic Content</a>';
+                    $btn .= ' <a href="' . route('backend.topic-block.manage', $row->id) . '" class="manage btn btn-info btn-sm">Manage Topic Content</a>';
                     $btn .= ' <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Delete</button>';
                     return $btn;
                 })

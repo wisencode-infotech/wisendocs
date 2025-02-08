@@ -29,20 +29,21 @@ Route::middleware(['auth', 'check.role:admin'])->group(function () {
         Route::delete('destroy/{topic}', [TopicController::class, 'destroy'])->name('destroy'); // Destroy route
     });
 
-    Route::group(['prefix' => 'manage-topic-block', 'as' => 'manage-topic-block.'], function () {
-        Route::get('/{topic}', [ManageTopicBlockController::class, 'index'])->name('index');
-        Route::get('create/{topic}', [ManageTopicBlockController::class, 'create'])->name('create');
-        Route::get('/{topic}/edit/{topic_block}', [ManageTopicBlockController::class, 'edit'])->name('edit');
+    Route::group(['prefix' => 'topic-block', 'as' => 'topic-block.'], function () {
+        Route::group(['prefix' => '/{topic}'], function () {
+            Route::get('/manage', [ManageTopicBlockController::class, 'manage'])->name('manage');
+            Route::post('/save-attributes', [ManageTopicBlockController::class, 'saveAttributes'])->name('save-attributes');
+        });
     });
 
-    Route::group(['prefix' => 'topic-block', 'as' => 'topic-block.'], function () {
-        Route::get('/version/{version}', [TopicBlockController::class, 'index'])->name('index'); // Listing route
-        Route::get('create', [TopicBlockController::class, 'create'])->name('create'); // Create route
-        Route::post('store', [TopicBlockController::class, 'store'])->name('store'); // Store route
-        Route::get('edit/{topic_block}', [TopicBlockController::class, 'edit'])->name('edit'); // Edit route
-        Route::put('update/{topic_block}', [TopicBlockController::class, 'update'])->name('update'); // Update route
-        Route::delete('destroy/{topic_block}', [TopicBlockController::class, 'destroy'])->name('destroy'); // Destroy route
-    });
+    // Route::group(['prefix' => 'topic-block', 'as' => 'topic-block.'], function () {
+    //     Route::get('/version/{version}', [TopicBlockController::class, 'index'])->name('index'); // Listing route
+    //     Route::get('create', [TopicBlockController::class, 'create'])->name('create'); // Create route
+    //     Route::post('store', [TopicBlockController::class, 'store'])->name('store'); // Store route
+    //     Route::get('edit/{topic_block}', [TopicBlockController::class, 'edit'])->name('edit'); // Edit route
+    //     Route::put('update/{topic_block}', [TopicBlockController::class, 'update'])->name('update'); // Update route
+    //     Route::delete('destroy/{topic_block}', [TopicBlockController::class, 'destroy'])->name('destroy'); // Destroy route
+    // });
 });
 
 

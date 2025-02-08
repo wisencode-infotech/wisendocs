@@ -11,7 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ManageTopicBlockController extends Controller
 {
-    public function index(Request $request, Topic $topic)
+    public function manage(Request $request, Topic $topic)
     {
         $block_types = BlockType::all();
 
@@ -23,7 +23,7 @@ class ManageTopicBlockController extends Controller
 
         $block_html = $this->generateNestedList($topic_blocks, true);
 
-        return view('backend.manage-topic-block.manage', compact('topic', 'block_types', 'block_html'));
+        return view('backend.topic-block.manage', compact('topic', 'block_types', 'block_html'));
     }
 
     private function generateNestedList($blocks, $isMain = false)
@@ -40,7 +40,8 @@ class ManageTopicBlockController extends Controller
             $type = $block->blockType->type ?? 'Unknown';
 
             $html .= "<li class=\"list-group-item selected-block level-$level\" 
-                         data-type=\"$type\" 
+                         data-type=\"$type\"
+                         data-block_type_id=\"$block->block_type_id\" 
                          data-attribute='" . htmlspecialchars($block->attributes, ENT_QUOTES, 'UTF-8') . "' 
                          data-level=\"$level\" 
                          data-id=\"$block->id\">";
@@ -63,83 +64,49 @@ class ManageTopicBlockController extends Controller
 
         return $html;
     }
-    
-    // public function index(Request $request, Topic $topic)
-    // {
-    //     if ($request->ajax()) {
 
-    //         $data = TopicBlock::where('topic_id', $topic->id)->orderBy('order', 'asc')->get();
-            
-    //         return Datatables::of($data)
-    //             ->addIndexColumn()
-    //             ->addColumn('block_type', function ($row) {
-    //                 return $row->blockType->type ?? 'N/A';
-    //             })
-    //             ->addColumn('attributes', function ($row) {
-    //                 return $row->attributes ?? 'N/A';
-    //             })
-    //             ->addColumn('order', function ($row) {
-    //                 return $row->order ?? 'N/A';
-    //             })
-    //             ->addColumn('start_content_level', function ($row) {
-    //                 return $row->start_content_level ?? 'N/A';
-    //             })
-    //             ->addColumn('action', function ($row) use ($topic) {
-    //                 $btn = '<a href="' . route('backend.manage-topic-block.edit', ['topic' => $topic->id, 'topic_block' => $row->id]) . '" class="edit btn btn-primary btn-sm">Edit</a>';
-    //                 $btn .= ' <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Delete</button>';
-    //                 return $btn;
-    //             })
-    //             ->rawColumns(['action'])
-    //             ->make(true);
-    //     }
-
-    //     return view('backend.manage-topic-block.index', compact('topic'));
-    // }
-
-    /**
-     * Show the form for creating a new topic block.
-     */
-    public function create()
+    public function saveAttributes(Request $request, Topic $topic)
     {
-        $block_types = BlockType::all();
-        return view('backend.manage-topic-block.create', compact('block_types'));
-    }
+        $request->validate([
+            'block_type_id' => 'required',
+            'topic_id' => 'required',
+            'topic_block_attributes' => 'required'
+        ]);
 
-    /**
-     * Store a newly created topic block in storage.
-     */
-    public function store(Request $request)
-    {
-        
+        $topic_block_id = $request->topic_block_id ?? 0;
+        $topic_id = $request->topic_id ?? 0;
+        $block_type_id = $request->block_type_id ?? null;
 
-    }
+        if (empty($topic_block_id))
+            $topic_block = new TopicBlock();
+        else
+            $topic_block = TopicBlock::find($topic_block_id);
 
-    /**
-     * Show the form for editing the specified topic block.
-     */
-    public function edit(Topic $topic, TopicBlock $topic_block)
-    {
-        dump($topic);
-        dd($topic_block);
-        $block_types = BlockType::all();
-        return view('backend.topic-block.edit', compact('topic_block', 'block_types'));
-    }
+        $topic_block->topic_id = $topic_id;
+        $topic_block->block_type_id = $block_type_id;
 
-    /**
-     * Update the specified topic block.
-     */
-    public function update(Request $request, TopicBlock $topicBlock)
-    {
-        
+        $topic_block->attributes = json_encode($request->topic_block_attributes ?? []);
+
+        $topic_block->save();
+
+        app('App\Helpers\SystemUtils')->clearAllCache();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Attributes saved successfully.',
+            'data' => [
+                'topic_block' => $topic_block
+            ]
+        ]);
     }
 
     /**
      * Remove the specified topic block.
      */
-    public function destroy(TopicBlock $topicBlock)
+    public function destroy(TopicBlock $topic_block)
     {
-        if ($topicBlock) {
-            $topicBlock->delete();
+        if ($topic_block) {
+            $topic_block->delete();
             return response()->json(['success' => 'Topic Block deleted successfully.']);
         }
 

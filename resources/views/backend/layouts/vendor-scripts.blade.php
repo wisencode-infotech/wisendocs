@@ -9,6 +9,62 @@
 <script src="{{ URL::asset('assets/backend/js/pages/toastr.init.js')}}"></script>
 <script src="{{ URL::asset('assets/backend/js/pages/chart.js')}}"></script>
 <script>
+
+    function execPostAjax(URL, data, callback = null, errorcallback = null) {
+        $.ajax({
+            type: 'POST',
+            url: URL,
+            headers: {
+                'X-CSRF-TOKEN': document.head.querySelector("[name='csrf-token']").content,
+                'X-Initiator': 'backend'
+            },
+            data: data,
+            dataType: 'json',
+            beforeSend: function() {
+                
+            },
+            success: function(response) {
+                callback(response);
+            },
+            error: function(xhr, status, error) {
+                if(errorcallback) {
+                    errorcallback(xhr);
+                }
+            }
+        });
+    }
+
+    function toastAcknowledgements(xhr)
+    {
+        if (xhr.status === 200) {
+            toastSuccessMsgs(xhr);
+        } else {
+            toastValidationErrors(xhr);
+        }
+    }
+
+    function toastSuccessMsgs(response)
+    {
+        if (response.hasOwnProperty('message')) {
+            if (response.hasOwnProperty('status') && response.status)
+                toastr.success(response.message);
+            else
+                toastr.error(response.message);
+        }
+    }
+
+    function toastValidationErrors(xhr)
+    {
+        if (xhr.status === 422) {
+            var errors = xhr.responseJSON.errors;
+            $.each(errors, function(key, message) {
+                toastr.error(message);
+            });
+        } else {
+            toastr.error(SOMETHING_WENT_WRONG_TEXT);
+        }
+    }
+
     $('#change-password').on('submit',function(event){
         event.preventDefault();
         var Id = $('#data_id').val();

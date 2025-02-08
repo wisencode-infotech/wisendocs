@@ -61,7 +61,7 @@
 
 @component('backend.components.breadcrumb')
     @slot('li_1') Manage Topic Block @endslot
-    @slot('title') Manage Topic Block @endslot
+    @slot('title') {{ $topic->name }} (Version {{ $topic->versioning()->select('identifier')->first()->identifier ?? '' }} ) @endslot
 @endcomponent
 
 <div class="manage-block-section">
@@ -70,7 +70,7 @@
             <h5 class="text-center">Available Block Types</h5>
             <ul class="list-group">
                 @foreach($block_types as $block_type)
-                    <li class="list-group-item draggable" data-type="{{ $block_type->type }}" draggable="true">
+                    <li class="list-group-item draggable" data-type="{{ $block_type->type }}" data-block_type_id="{{ $block_type->id }}" draggable="true">
                         {{ ucfirst(str_replace('-', ' ', $block_type->type)) }}
                     </li>
                 @endforeach
@@ -87,8 +87,8 @@
 
         <div class="col-md-3 p-3 bg-light border" id="manage-attribute-section">
             <h5 class="text-center">Block Attributes</h5>
-            <input type="hidden" name="attributes[block_id]" id="block_id">
-            <input type="hidden" name="attributes[block_type]" id="block_type">
+            <input type="hidden" name="attributes[topic_block_id]" id="topic_block_id">
+            <input type="hidden" name="attributes[block_type_id]" id="block_type_id">
             <input type="hidden" name="attributes[topic_id]" id="topic_id" value="{{ $topic->id }}">
             
             <div id="attribute-options">Select a block to edit attributes.</div>
@@ -105,11 +105,14 @@
 <script>
 $(document).ready(function() {
     let draggedBlockType = null;
+    let draggedBlockTypeId = null;
 
     // Handle dragging
     $(document).on("dragstart", ".draggable", function(event) {
         draggedBlockType = $(this).data("type"); // Store block type
+        draggedBlockTypeId = $(this).data("block_type_id"); // Store block type id
         event.originalEvent.dataTransfer.setData("text/plain", draggedBlockType);
+        event.originalEvent.dataTransfer.setData("text/plain", draggedBlockTypeId);
     });
 
     // Prevent multiple drops
@@ -126,11 +129,14 @@ $(document).ready(function() {
         let blockType = draggedBlockType;
         if (!blockType) return;
 
+        let blockTypeId = draggedBlockTypeId;
+        if (!blockTypeId) return;
+
         let parentLi = $(event.target).closest("li");
         let level = parentLi.length ? parseInt(parentLi.attr("data-level") || 1) + 1 : 1;
 
         let newBlock = $(`
-            <li class="list-group-item selected-block level-${level}" data-type="${blockType}" data-level="${level}">
+            <li class="list-group-item selected-block level-${level}" data-type="${blockType}" data-level="${level}" data-block_type_id="${blockTypeId}">
                 <span class="item-content">${blockType.replace("-", " ")}</span>
                 <button class="btn btn-sm btn-success edit-block rounded-circle"><i class="bx bx-pencil"></i></button>
                 <button class="btn btn-sm btn-danger rounded-circle remove-block"><i class="bx bx-x"></i></button>
@@ -183,17 +189,17 @@ $(document).ready(function() {
         $('.attribute-error').html('');
 
         let $block = $(this).closest("li");
-        let blockType = $block.data("type");
+        let block_type_id = $block.data("block_type_id");
         let attributes = $block.attr("data-attribute");
-        let block_id = $block.attr("data-id");
+        let topic_block_id = $block.attr("data-id");
+        let blockType = $block.data("type");
 
-        if (block_id) {
-            $('#block_id').val(block_id);
-        } else {
-            $('#block_id').val(null);
-        }
+        if (topic_block_id)
+            $('#topic_block_id').val(topic_block_id);
+        else
+            $('#topic_block_id').val(null);
 
-        $('#block_type').val(blockType);
+        $('#block_type_id').val(block_type_id);
 
         // Parse attributes JSON if available
         let attributesData = attributes ? JSON.parse(attributes.replace(/&quot;/g, '"')) : {};
@@ -289,23 +295,32 @@ $(document).ready(function() {
     // Save button event
     $("#save-btn").click(function() {
 
-       
-
         checkSaveButtonState();
+
+        let payload = {
+            attributes : {},
+            topic_block_id : document.getElementById("topic_block_id").value,
+            block_type_id : document.getElementById("block_type_id").value,
+            topic_id : document.getElementById("topic_id").value
+        };
 
         let attributes = {};
 
-            // Select all input and textarea fields inside #attribute-options
-            document.querySelectorAll("#attribute-options input, #attribute-options textarea").forEach(field => {
-                let name = field.name.replace("attributes[", "").replace("]", ""); // Extract field name
-                attributes[name] = field.value; // Store value
-            });
+        // Select all input and textarea fields inside #attribute-options
+        document.querySelectorAll("#attribute-options input, #attribute-options textarea").forEach(field => {
+            let name = field.name.replace("attributes[", "").replace("]", ""); // Extract field name
+            attributes[name] = field.value; // Store value
+        });
 
-            attributes["block_id"] = document.getElementById("block_id").value;
-            attributes["block_type"] = document.getElementById("block_type").value;
-            attributes["topic_id"] = document.getElementById("topic_id").value;
+        payload.topic_block_attributes = attributes;
 
-            console.log(attributes); // Check the collected attributes
+        execPostAjax('{{ route("backend.topic-block.save-attributes", [ $topic ]) }}', payload, 
+        function(response) {
+            console.log(response)
+            toastSuccessMsgs(response);
+        }, function(error) {
+            toastValidationErrors(error);
+        });
         
     });
 
