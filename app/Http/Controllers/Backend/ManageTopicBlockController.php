@@ -7,6 +7,7 @@ use App\Models\Topic;
 use App\Models\BlockType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\BlockAttribute;
 use Yajra\DataTables\Facades\DataTables;
 
 class ManageTopicBlockController extends Controller
@@ -23,7 +24,13 @@ class ManageTopicBlockController extends Controller
 
         $block_html = $this->generateNestedList($topic_blocks, true);
 
-        return view('backend.topic-block.manage', compact('topic', 'block_types', 'block_html'));
+        $block_attributes = BlockAttribute::all()->mapWithKeys(function ($item) {
+            return [
+                $item->blockType->type => is_array($item->attributes) ? array_values($item->attributes) : []
+            ];
+        });
+
+        return view('backend.topic-block.manage', compact('topic', 'block_types', 'block_html', 'block_attributes'));
     }
 
     private function generateNestedList($blocks, $isMain = false)
@@ -103,13 +110,28 @@ class ManageTopicBlockController extends Controller
     /**
      * Remove the specified topic block.
      */
-    public function destroy(TopicBlock $topic_block)
+    // public function destroy(TopicBlock $topic_block)
+    // {
+
+    //     if ($topic_block) {
+    //         $topic_block->delete();
+    //         return response()->json(['status' => true, 'message' => 'Topic Block deleted successfully.']);
+    //     }
+
+    //     return response()->json(['error' => 'Topic Block not found.'], 404);
+    // }
+
+    public function destroy(Request $request, $topic)
     {
-        if ($topic_block) {
-            $topic_block->delete();
-            return response()->json(['success' => 'Topic Block deleted successfully.']);
+        $topicBlock = TopicBlock::find($request->id);
+        // dd($topicBlock);
+
+        if (!$topicBlock) {
+            return response()->json(['status' => false, 'message' => 'Block not found'], 404);
         }
 
-        return response()->json(['error' => 'Topic Block not found.'], 404);
+        $topicBlock->delete();
+
+        return response()->json(['status' => true, 'message' => 'Block deleted successfully']);
     }
 }

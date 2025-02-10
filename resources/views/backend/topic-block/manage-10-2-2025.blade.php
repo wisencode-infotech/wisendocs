@@ -65,12 +65,6 @@
 @endcomponent
 
 <div class="manage-block-section">
-
-    <div class="d-flex justify-content-end mb-3">
-        <a target="_blank" href="{{ url('/'. $topic->slug) }}" class="btn btn-info">Publish</a>
-    </div>
-
-
     <div class="row">
         <div class="col-md-3 p-3 bg-light border" id="block-list">
             <h5 class="text-center">Available Block Types</h5>
@@ -182,63 +176,191 @@ $(document).ready(function() {
         }
     });
 
-    // Edit block attributes
-    $(document).on("click", ".edit-block", function() {
+    // Remove block
+    $(document).on("click", ".remove-block", function() {
+        $(this).closest("li").remove();
+        updateSelectedBlocks();
+    });
 
+    $(document).on("click", ".edit-block", function () {
         $("#save-btn").prop("disabled", false);
         $('.attribute-error').html('');
 
         let $block = $(this).closest("li");
-        let block_type_id = $block.data("block_type_id");
         let attributes = $block.attr("data-attribute");
-        let topic_block_id = $block.attr("data-id");
         let blockType = $block.data("type");
 
-        if (topic_block_id)
-            $('#topic_block_id').val(topic_block_id);
-        else
-            $('#topic_block_id').val(null);
-
-        $('#block_type_id').val(block_type_id);
-
-        // Parse attributes JSON if available
         let attributesData = attributes ? JSON.parse(attributes.replace(/&quot;/g, '"')) : {};
 
         let fieldsHtml = "";
-
         let block_attributes = @json($block_attributes);
-
-        // Ensure each attribute is an array
-        Object.keys(block_attributes).forEach(key => {
-            if (!Array.isArray(block_attributes[key])) {
-                block_attributes[key] = Object.values(block_attributes[key]);
-            }
-        });
-
 
         if (blockType in block_attributes) {
             block_attributes[blockType].forEach(attr => {
-                let value = attributesData[attr.name.split('[').pop().replace(']', '')] || ""; // Get value from attributesData
 
-                let placeholderData = attr.placeholder || '';
+                let key = attr.name.split('[').pop().replace(']', '');
+
+                if(key == 'tree'){
+                    key = 'nodes';
+                }
+
+                let value = attributesData[key] !== undefined ? attributesData[key] : "";
+                let formattedValue = formatValue(value);
+                let formattedPlaceholder = formatValue(attr.placeholder || "");
+
+                console.log(formattedPlaceholder);
+                console.log(value);
 
                 fieldsHtml += `
-
-                
-                <div class='mb-2'>
-                    <label>${attr.label}</label>
-                    ${attr.type === 'textarea' 
-                        ? `<textarea name="${attr.name}" class="form-control" placeholder="${placeholderData}">${value}</textarea>` 
-                        : attr.type === 'checkbox'
-                            ? `<input type="checkbox" name="${attr.name}" class="form-check-input" ${value == "1" || value == "true" ? "checked" : ""}><br>`
-                            : `<input type="${attr.type}" name="${attr.name}" class="form-control" placeholder="${attr.placeholder || ''}" value="${value}">`
-                    }
-                </div>`;
+                    <div class='mb-2'>
+                        <label>${attr.label}</label>
+                        ${attr.type === 'textarea' 
+                            ? `<textarea name="${attr.name}" class="form-control" placeholder="${formattedPlaceholder}">${formattedValue}</textarea>` 
+                            : attr.type === 'checkbox'
+                                ? `<input type="checkbox" name="${attr.name}" class="form-check-input" ${value == "1" || value == "true" ? "checked" : ""}><br>`
+                                : `<input type="${attr.type}" name="${attr.name}" class="form-control" placeholder="${formattedPlaceholder}" value="${formattedValue}">`
+                        }
+                    </div>`;
             });
         }
 
         $("#attribute-options").html(fieldsHtml);
     });
+
+
+
+    function formatValue(data) {
+        if (Array.isArray(data)) {
+            return data.map(item => formatValue(item)).join(", "); // Recursively format each item
+        } else if (typeof data === 'object' && data !== null) {
+            return JSON.stringify(data, null, 2); // Pretty-print JSON for nested objects
+        } else {
+            return data !== undefined ? data.toString() : ""; // Convert non-object values to string
+        }
+    }
+
+
+    // Edit block attributes
+    // $(document).on("click", ".edit-block", function() {
+
+    //     $("#save-btn").prop("disabled", false);
+    //     $('.attribute-error').html('');
+
+    //     let $block = $(this).closest("li");
+    //     let block_type_id = $block.data("block_type_id");
+    //     let attributes = $block.attr("data-attribute");
+    //     let topic_block_id = $block.attr("data-id");
+    //     let blockType = $block.data("type");
+
+    //     if (topic_block_id)
+    //         $('#topic_block_id').val(topic_block_id);
+    //     else
+    //         $('#topic_block_id').val(null);
+
+    //     $('#block_type_id').val(block_type_id);
+
+    //     // Parse attributes JSON if available
+    //     let attributesData = attributes ? JSON.parse(attributes.replace(/&quot;/g, '"')) : {};
+
+    //     let fieldsHtml = "";
+
+    //     let block_attributes = @json($block_attributes);
+
+    //     // Ensure each attribute is an array
+    //     Object.keys(block_attributes).forEach(key => {
+    //         if (!Array.isArray(block_attributes[key])) {
+    //             block_attributes[key] = Object.values(block_attributes[key]);
+    //         }
+    //     });
+
+    //     // console.log(block_attributes);
+
+    //     if (blockType in block_attributes) {
+    //         block_attributes[blockType].forEach(attr => {
+    //             let value = attributesData[attr.name.split('[').pop().replace(']', '')] || ""; // Get value from attributesData
+
+    //             let placeholderData = attr.placeholder;
+
+    //             // value = JSON.stringify(value, null, 4)
+
+    //             console.log(attributesData);
+
+    //             // if (value) {
+    //             //     let jsonString = JSON.stringify(value, null, 4);
+    //             //     console.log(value);
+    //             // } else {
+    //             //     console.error("value is empty or undefined");
+    //             // }
+
+    //             placeholder = JSON.stringify(value, null, 4)
+
+    //             // try {
+    //             //     let decodedString = decodeHTMLEntities(placeholderData); // Decode HTML entities
+    //             //     console.log("Decoded String:", decodedString);
+
+    //             //     let jsonData = JSON.parse(decodedString); // Try parsing JSON
+
+    //             //     console.log("Parsed JSON:", jsonData);
+    //             //     var  placeholder = jsonData; // Use parsed JSON
+    //             // } catch (error) {
+    //             //     console.warn("JSON parse failed, using raw string:", error);
+    //             //     var placeholder = placeholderData; // Fallback to plain text
+    //             // }
+
+    //             // console.log("Final Placeholder:", placeholder);
+
+
+    //             //     try {
+    //             //         // Parse JSON if it's a string
+    //             //         if (typeof placeholderData === 'string') {
+    //             //             placeholderData = JSON.parse(placeholderData);
+    //             //         }
+
+    //             //         // If it's an array, extract the first object's title
+    //             //         if (Array.isArray(placeholderData) && placeholderData.length > 0) {
+    //             //             placeholderData = placeholderData[0]; // Get the first item
+    //             //         }
+
+    //             //         // Extract the title from `info`
+    //             //         let placeholderText = placeholderData?.info?.title || 'No Title Available';
+
+    //             //         // Decode HTML entities (if necessary)
+    //             //         const tempDiv = document.createElement("div");
+    //             //         tempDiv.innerHTML = placeholderText;
+    //             //         placeholderText = tempDiv.textContent || tempDiv.innerText;
+
+    //             //         console.log("Final Placeholder:", placeholderText);
+
+    //             //     } catch (error) {
+    //             //         console.error("Error parsing placeholder:", error);
+    //             //     }
+
+    //             // console.log(attr.placeholder);
+
+    //             fieldsHtml += `
+
+                
+    //             <div class='mb-2'>
+    //                 <label>${attr.label}</label>
+    //                 ${attr.type === 'textarea' 
+    //                     ? `<textarea name="${attr.name}" class="form-control" placeholder="${placeholder}">${value}</textarea>` 
+    //                     : attr.type === 'checkbox'
+    //                         ? `<input type="checkbox" name="${attr.name}" class="form-check-input" ${value == "1" || value == "true" ? "checked" : ""}><br>`
+    //                         : `<input type="${attr.type}" name="${attr.name}" class="form-control" placeholder="${attr.placeholder || ''}" value="${value}">`
+    //                 }
+    //             </div>`;
+    //         });
+    //     }
+
+    //     $("#attribute-options").html(fieldsHtml);
+    // });
+
+    // function decodeHTMLEntities(text) {
+    //     const textarea = document.createElement("textarea");
+    //     textarea.innerHTML = text;
+    //     return textarea.value;
+    // }
+
 
     // Update selected blocks
     function updateSelectedBlocks() {
@@ -324,19 +446,24 @@ $(document).ready(function() {
 
     $(document).on("click", ".remove-block", function() {
         let $block = $(this).closest("li");
-        let topicBlockId = $block.attr("data-id");
+        let topicBlockId = $block.attr("data-id"); // Assuming topic block has a data-id attribute
+
+        if (!topicBlockId) {
+            $block.remove(); // If no ID, just remove from DOM
+            updateSelectedBlocks();
+            return;
+        }
 
         if (confirm("Are you sure you want to delete this block?")) {
             $.ajax({
-                url: "{{ route('backend.topic-block.destroy', $topic) }}",
-                type: "DELETE",
+                url: "{{ route('backend.topic-block.destroy', $topic) }}", // Adjust route accordingly
+                type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
                     id: topicBlockId
                 },
                 success: function(response) {
-                    if (response.status) {
-                        toastSuccessMsgs(response);
+                    if (response.success) {
                         $block.remove();
                         updateSelectedBlocks();
                     } else {
@@ -349,7 +476,6 @@ $(document).ready(function() {
             });
         }
     });
-
 
 });
 
