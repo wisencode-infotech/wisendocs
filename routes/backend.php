@@ -33,6 +33,7 @@ Route::middleware(['auth', 'check.role:admin'])->group(function () {
         Route::group(['prefix' => '/{topic}'], function () {
             Route::get('/manage', [ManageTopicBlockController::class, 'manage'])->name('manage');
             Route::post('/save-attributes', [ManageTopicBlockController::class, 'saveAttributes'])->name('save-attributes');
+            Route::post('/publish', [ManageTopicBlockController::class, 'publish'])->name('publish');
             Route::delete('/destroy', [ManageTopicBlockController::class, 'destroy'])->name('destroy');
         });
     });
