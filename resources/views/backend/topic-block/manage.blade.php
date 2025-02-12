@@ -13,6 +13,7 @@
     .nested-list {
         list-style: none;
         padding-left: 0;
+        padding: 10px;
     }
 
     .nested-list li:first-child {
