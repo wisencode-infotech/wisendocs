@@ -1,0 +1,159 @@
+#middle-list {
+    min-height: 300px;
+    border: 2px dashed #ccc;
+    padding: 25px;
+    list-style: none;
+}
+
+.list-group {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.list-group-item {
+    cursor: grab;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    /* overflow: auto; */
+}
+
+.list-group-item .item-content {
+    flex-grow: 1;
+    font-weight: bolder;
+    margin-right: 10px;
+}
+
+.remove-block {
+    cursor: pointer;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.level-indent {
+    padding-left: 20px;
+}
+
+.btn.rounded-circle {
+    width: 30px;
+    /* Adjust as needed */
+    height: 30px;
+    /* Adjust as needed */
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.hide-if-no-block-active {
+    display: none !important;
+}
+
+/* General Styling */
+#selected-blocks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #f9fafb;
+    border-radius: 8px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+/* Each Block Item */
+.nested-block {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin: 5px 0;
+    padding: 8px 10px;
+    transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make Nested Blocks More Compact */
+.nested-block .nested-list {
+    padding-left: 15px;
+    border-left: 2px solid #ddd; /* Visual indication of hierarchy */
+    margin-left: 8px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+/* Block Content (Main Row) */
+.block-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: grab;
+    font-size: 14px;
+}
+
+/* Block Title */
+.block-title {
+    font-weight: 500;
+    flex-grow: 1;
+}
+
+/* Block Actions */
+.block-actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* Modern Buttons */
+.block-actions button {
+    border: none;
+    color: #777;
+    font-size: 14px;
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.block-actions button:hover {
+    color: #007bff;
+    transform: scale(1.1);
+}
+
+/* Dragging Effect */
+.dragging-effect {
+    opacity: 0.7;
+    background: #e3f2fd;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+}
+
+/* Drag Over Effect */
+.drag-over-effect {
+    border: 2px dashed #007bff;
+    background: #f1faff;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Transition on Drop */
+@keyframes pop-in {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.nested-block {
+    animation: pop-in 0.2s ease-in-out;
+}
+
+.sortable-placeholder {
+    height: 40px;
+    background: #f0f0f0;
+    border: 2px dashed #007bff;
+    margin: 10px 0;
+}
+
+.dragging-effect {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+}

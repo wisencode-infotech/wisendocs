@@ -35,39 +35,10 @@ class ManageTopicBlockController extends Controller
 
     private function generateNestedList($blocks, $isMain = false)
     {
-        if ($blocks->isEmpty()) return '';
+        $html = '';
 
-        $ulClass = $isMain ? 'list-group min-vh-50 border ui-sortable' : 'nested-list ui-sortable';
-        $ulId = $isMain ? 'id="middle-list"' : '';
-
-        $html = "<ul class=\"$ulClass\" $ulId>";
-
-        foreach ($blocks as $block) {
-            $level = $block->start_content_level;
-            $type = $block->blockType->type ?? 'Unknown';
-
-            $html .= "<li class=\"list-group-item selected-block level-$level\" 
-                         data-type=\"$type\"
-                         data-block_type_id=\"$block->block_type_id\" 
-                         data-attribute='" . htmlspecialchars($block->attributes, ENT_QUOTES, 'UTF-8') . "' 
-                         data-level=\"$level\" 
-                         data-id=\"$block->id\">";
-
-            $html .= "<span class=\"item-content\">$type</span>";
-
-            $html .= " <button class=\"btn btn-sm btn-success edit-block rounded-circle\"><i class=\"bx bx-pencil\"></i></button>";
-            $html .= " <button class=\"btn btn-sm btn-danger rounded-circle remove-block\"><i class=\"bx bx-x\"></i></button>";
-            $html .= "<ul class=\"nested-list\"></ul>";
-
-            if ($block->children->isNotEmpty()) {
-                $html .= $this->generateNestedList($block->children);
-            }
-
-            $html .= "</li>";
-        
-        }
-
-        $html .= "</ul>";
+        if ($blocks->isEmpty()) 
+            return '';
 
         return $html;
     }

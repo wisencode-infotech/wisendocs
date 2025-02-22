@@ -16,7 +16,7 @@ class BlockAttributeSeeder extends Seeder
             ['block_type' => 1, 'attributes' => [['label' => 'Text', 'name' => 'attributes[text]', 'type' => 'textarea']]],
             ['block_type' => 2, 'attributes' => [['label' => 'Text', 'name' => 'attributes[text]', 'type' => 'textarea']]],
             ['block_type' => 3, 'attributes' => [['label' => 'Text', 'name' => 'attributes[text]', 'type' => 'textarea']]],
-            ['block_type' => 4, 'attributes' => [['label' => 'List Items', 'name' => 'attributes[list]', 'type' => 'textarea', 'placeholder' => 'Enter items separated by commas']]],
+            ['block_type' => 4, 'attributes' => [['label' => 'List Items', 'name' => 'attributes[list]', 'type' => 'list', 'placeholder' => 'Enter items separated by commas']]],
             ['block_type' => 5, 'attributes' => [
                 ['label' => 'Code', 'name' => 'attributes[code]', 'type' => 'textarea', 'placeholder' => 'Enter code here'],
                 ['label' => 'Language', 'name' => 'attributes[language]', 'type' => 'text', 'placeholder' => 'e.g., PHP, JavaScript'],

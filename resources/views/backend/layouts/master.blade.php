@@ -12,6 +12,9 @@
     <link rel="shortcut icon" href="{{ URL::asset('assets/backend/images/favicon.ico') }}">
     @include('backend.layouts.head-css')
     @include('backend.layouts.vendor-styles')
+
+    @yield('styles')
+
     <script>
         const APP_BACKEND_URL = '{{ route("backend.home") }}';
     </script>

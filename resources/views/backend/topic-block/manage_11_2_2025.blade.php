@@ -13,6 +13,7 @@
     .nested-list {
         list-style: none;
         padding-left: 0;
+        padding: 10px;
     }
 
     .nested-list li:first-child {
@@ -226,18 +227,41 @@ $(document).ready(function() {
 
                 let placeholderData = attr.placeholder || '';
 
-                fieldsHtml += `
+                console.log(attr)
 
-                
-                <div class='mb-2'>
-                    <label>${attr.label}</label>
-                    ${attr.type === 'textarea' 
-                        ? `<textarea name="${attr.name}" class="form-control" placeholder="${placeholderData}">${value}</textarea>` 
-                        : attr.type === 'checkbox'
-                            ? `<input type="checkbox" name="${attr.name}" class="form-check-input" ${value == "1" || value == "true" ? "checked" : ""}><br>`
-                            : `<input type="${attr.type}" name="${attr.name}" class="form-control" placeholder="${attr.placeholder || ''}" value="${value}">`
-                    }
-                </div>`;
+                if (attr.type === 'textarea') {
+                    fieldsHtml += `
+                        <div class='mb-2'>
+                            <label>${attr.label}</label>
+                            <textarea name="${attr.name}" class="form-control" placeholder="${placeholderData}">${value}</textarea>
+                        </div>`;
+                } 
+                else if (attr.type === 'checkbox') {
+                    fieldsHtml += `
+                        <div class='mb-2'>
+                            <label>${attr.label}</label><br>
+                            <input type="checkbox" name="${attr.name}" class="form-check-input" ${value == "1" || value == "true" ? "checked" : ""}>
+                        </div>`;
+                } 
+                else if (attr.type === 'list') {
+                    // Handling list type attributes dynamically
+                    fieldsHtml += `<div class='mb-2'><label>${attr.label}</label>`;
+                    attr.options.forEach((item, index) => {
+                        let itemValue = attributesData[item] || ""; // Fetch existing value if available
+                        fieldsHtml += `
+                            <div class='mb-2'>
+                                <label>${item}</label>
+                                <input type="text" name="${attr.name}[${index}]" class="form-control" value="${itemValue}" placeholder="Enter ${item}">
+                            </div>`;
+                    });
+                    fieldsHtml += `</div>`;
+                } else {
+                    fieldsHtml += `
+                        <div class='mb-2'>
+                            <label>${attr.label}</label>
+                            <input type="${attr.type}" name="${attr.name}" class="form-control" placeholder="${attr.placeholder || ''}" value="${value}">
+                        </div>`;
+                }
             });
         }
 
@@ -416,15 +440,13 @@ $(document).ready(function() {
             },
             success: function(response) {
                 if (response.success) {
-                    alert("Topic block published successfully!");
-                    location.reload(); // Reload to reflect changes
+                    toastr.success("Topic block published successfully!");
                 } else {
-                    alert("Failed to publish. Try again.");
+                    toastr.error("Failed to publish. Try again.");
                 }
             },
             error: function(xhr) {
-                console.error(xhr.responseText);
-                alert("An error occurred while publishing.");
+                toastr.error("An error occurred while publishing.");
             }
         });
     });
